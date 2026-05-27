@@ -30,7 +30,7 @@ function moveButtonRandomly() {
     noBtn.style.transform = 'none'; 
 }
 
-// Sicherheits-Optimierung für Desktop-Mäuse (Abstands-Tracking)
+// Sicherheits-Optimierung für Desktop-Mäuse
 document.addEventListener('mousemove', (e) => {
     const btnRect = noBtn.getBoundingClientRect();
     
@@ -48,14 +48,14 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// Absolute Klick-Sperre (Failsafe)
+// Absolute Klick-Sperre
 noBtn.addEventListener('click', (e) => {
     e.preventDefault(); 
     alert("Haha, zu langsam! Versuch es erst gar nicht 😉");
     moveButtonRandomly(); 
 });
 
-// Mobile Touch Avoidance für Smartphones
+// Mobile Touch Avoidance
 noBtn.addEventListener('touchstart', function(e) {
     e.preventDefault(); 
     moveButtonRandomly();
@@ -63,18 +63,28 @@ noBtn.addEventListener('touchstart', function(e) {
 
 
 // --- Daten sammeln & E-Mail-Versand ---
+let guestName = '';
 let selectedDate = '';
 let selectedTime = '';
 let selectedFood = '';
 
 function saveDateAndProceed() {
+    const nameInput = document.getElementById('name-input').value.trim();
     const dateInput = document.getElementById('date-picker').value;
     const timeInput = document.getElementById('time-picker').value;
+    
+    if(!nameInput) {
+        alert('Auf welchen Namen soll die Reservierung laufen? 📝');
+        return;
+    }
     
     if(!dateInput || !timeInput) {
         alert('Bitte wähle ein Datum und eine Uhrzeit aus! 🗓️⏰');
         return;
     }
+    
+    // Daten speichern
+    guestName = nameInput;
     
     // Datum in das deutsche Format (DD.MM.YYYY) umwandeln
     const dateParts = dateInput.split('-');
@@ -99,11 +109,11 @@ function finishSetup() {
         return;
     }
     
-    // Text auf der Bestätigungsseite dynamisch anpassen
+    // Text auf der Bestätigungsseite dynamisch anpassen (jetzt inkl. Name)
     const finalMessage = document.getElementById('final-message');
-    finalMessage.innerText = `glad you didn't say no. be ready by ${selectedDate} at ${selectedTime} for ${selectedFood}, I'm coming to get you 🚗`;
+    finalMessage.innerText = `glad you didn't say no, ${guestName}. be ready by ${selectedDate} at ${selectedTime} for ${selectedFood}, I'm coming to get you 🚗`;
     
-    // Formspree-Endpunkt mit deiner ID
+    // Formspree-Endpunkt
     const formspreeUrl = "https://formspree.io/f/xdajprkv"; 
 
     // POST-Request an Formspree senden
@@ -114,7 +124,8 @@ function finishSetup() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            "Betreff": "Neues Date gebucht! 💕",
+            "Betreff": `Neues Date mit ${guestName} gebucht! 💕`,
+            "Name": guestName,
             "Datum": selectedDate,
             "Uhrzeit": selectedTime,
             "Essen": selectedFood
