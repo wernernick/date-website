@@ -8,7 +8,24 @@
 </head>
 <body>
 
-    <div id="screen-1" class="screen active">
+    <div id="screen-0" class="screen active">
+        <h1>Hast du diesen Link von Markus bekommen? 🤔</h1>
+        <div class="flex-buttons">
+            <button class="btn-yes" onclick="startQueue()">Ja</button>
+            <button class="btn-no" onclick="nextScreen(1)">Nein</button>
+        </div>
+    </div>
+
+    <div id="screen-queue" class="screen hidden">
+        <h1>Warteschlange ⏳</h1>
+        <div class="spinner"></div>
+        <p>Bitte habe einen Moment Geduld...</p>
+        <p style="color: #d32f2f; font-weight: bold; font-size: 18px; margin-top: 10px;">
+            Es befinden sich aktuell <span id="queue-number">17</span> Personen vor dir.
+        </p>
+    </div>
+
+    <div id="screen-1" class="screen hidden">
         <img src="cute_car.jpg" alt="Cute Car" class="media">
         <h1>Will you go on a date with me? 🌸</h1>
         <div class="button-container">
