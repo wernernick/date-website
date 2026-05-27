@@ -147,3 +147,42 @@ button:active {
     border-color: #f472b6;
     transform: scale(1.05);
 }
+
+/* --- NEU: Styles für Screen 0 und die Warteschlange --- */
+
+/* Normale Buttons nebeneinander (für Ja/Nein ganz am Anfang) */
+.flex-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-yes {
+    background-color: #fbcfe8;
+    color: #831843;
+    width: 120px;
+}
+
+.btn-no {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    width: 120px;
+}
+
+/* Lade-Kreis (Spinner) für die Warteschlange */
+.spinner {
+    border: 6px solid #fdf2f8; /* Heller Hintergrund */
+    border-top: 6px solid #f472b6; /* Dunkelrosa Balken */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
