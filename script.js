@@ -1,13 +1,39 @@
 // --- Navigation ---
-function nextScreen(screenNumber) {
+function nextScreen(screenIdentifier) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
         screen.classList.add('hidden');
     });
     
-    const next = document.getElementById(`screen-${screenNumber}`);
+    // Funktioniert jetzt mit Zahlen (1,2,3) oder Wörtern ("queue")
+    const next = document.getElementById(`screen-${screenIdentifier}`);
     next.classList.remove('hidden');
     next.classList.add('active');
+}
+
+// --- NEU: Warteschlangen-Logik ---
+function startQueue() {
+    // Wechsle zur Warteschlange
+    nextScreen('queue');
+
+    let persons = 17;
+    const numberElement = document.getElementById('queue-number');
+    
+    // Kleiner Gag: Die Zahl verringert sich alle 1,5 Sekunden leicht
+    const interval = setInterval(() => {
+        if (persons > 1) {
+            // Zieht zufällig 1 bis 2 Personen ab
+            persons -= Math.floor(Math.random() * 2) + 1; 
+            if (persons < 1) persons = 1;
+            numberElement.innerText = persons;
+        }
+    }, 1500);
+
+    // Nach exakt 10 Sekunden (10.000 Millisekunden) geht es zur eigentlichen Seite
+    setTimeout(() => {
+        clearInterval(interval);
+        nextScreen(1);
+    }, 10000);
 }
 
 
@@ -32,8 +58,10 @@ function moveButtonRandomly() {
 
 // Sicherheits-Optimierung für Desktop-Mäuse
 document.addEventListener('mousemove', (e) => {
+    // Nur aktiv wenn der User sich auf Screen 1 befindet
+    if (!document.getElementById('screen-1').classList.contains('active')) return;
+
     const btnRect = noBtn.getBoundingClientRect();
-    
     const btnCenterX = btnRect.left + btnRect.width / 2;
     const btnCenterY = btnRect.top + btnRect.height / 2;
 
@@ -83,10 +111,7 @@ function saveDateAndProceed() {
         return;
     }
     
-    // Daten speichern
     guestName = nameInput;
-    
-    // Datum in das deutsche Format (DD.MM.YYYY) umwandeln
     const dateParts = dateInput.split('-');
     selectedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
     selectedTime = timeInput;
@@ -109,14 +134,11 @@ function finishSetup() {
         return;
     }
     
-    // Text auf der Bestätigungsseite dynamisch anpassen (jetzt inkl. Name)
     const finalMessage = document.getElementById('final-message');
     finalMessage.innerText = `glad you didn't say no, ${guestName}. be ready by ${selectedDate} at ${selectedTime} for ${selectedFood}, I'm coming to get you 🚗`;
     
-    // Formspree-Endpunkt
     const formspreeUrl = "https://formspree.io/f/xdajprkv"; 
 
-    // POST-Request an Formspree senden
     fetch(formspreeUrl, {
         method: 'POST',
         headers: {
@@ -136,6 +158,5 @@ function finishSetup() {
         console.error("Fehler beim Senden:", error);
     });
     
-    // Sofort den letzten Screen anzeigen
     nextScreen(5);
 }
