@@ -1,9 +1,9 @@
-// --- Navigation (Unverändert) ---
+// --- Navigation ---
 function nextScreen(screenNumber) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
         screen.classList.add('hidden');
-    }); 
+    });
     
     const next = document.getElementById(`screen-${screenNumber}`);
     next.classList.remove('hidden');
@@ -11,86 +11,76 @@ function nextScreen(screenNumber) {
 }
 
 
-// --- Der unbesiegbare flüchtende "Nein"-Button (AKTUALISIERT) ---
+// --- Der unbesiegbare flüchtende "Nein"-Button ---
 const noBtn = document.getElementById('no-btn');
-// Wir brauchen den Container, um die Grenzen zu kennen
 const buttonContainer = document.querySelector('.button-container'); 
 
-// Globale Funktion zum Bewegen des Buttons an eine zufällige Position
 function moveButtonRandomly() {
-    // Holen uns die Maße des Containers
     const containerRect = buttonContainer.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
 
-    // Berechnet zufällige Positionen innerhalb des Containers (abzüglich Buttongröße)
     const maxX = containerRect.width - btnRect.width;
     const maxY = containerRect.height - btnRect.height;
 
     const randomX = Math.floor(Math.random() * maxX);
     const randomY = Math.floor(Math.random() * maxY);
 
-    // Wende neue Position an
     noBtn.style.left = randomX + 'px';
     noBtn.style.top = randomY + 'px';
-    noBtn.style.transform = 'none'; // Entfernt die anfängliche CSS-Zentrierung
+    noBtn.style.transform = 'none'; 
 }
 
-// --- Sicherheits-Optimierung für Mäuse ---
-// Wir tracken die Mausbewegung auf der GESAMTEN SEITE
+// Sicherheits-Optimierung für Desktop-Mäuse (Abstands-Tracking)
 document.addEventListener('mousemove', (e) => {
-    // 1. Holen uns die aktuelle Position des Buttons auf dem Bildschirm
     const btnRect = noBtn.getBoundingClientRect();
     
-    // 2. Berechnen den Mittelpunkt des Buttons
     const btnCenterX = btnRect.left + btnRect.width / 2;
     const btnCenterY = btnRect.top + btnRect.height / 2;
 
-    // 3. Berechnen den Abstand der Maus (e.clientX, e.clientY) zum Button-Mittelpunkt
-    // Hier nutzen wir den Satz des Pythagoras: a² + b² = c²
     const distX = e.clientX - btnCenterX;
     const distY = e.clientY - btnCenterY;
     const distance = Math.sqrt(distX * distX + distY * distY);
 
-    // 4. Sicherheits-Radius definieren (in Pixeln)
-    // Sobald die Maus näher als 80px kommt, flüchtet der Button.
-    // Du kannst diesen Wert erhöhen, um es noch schwerer zu machen.
     const securityRadius = 85; 
 
-    // 5. Prüfen, ob die Maus im Radius ist
     if (distance < securityRadius) {
         moveButtonRandomly();
     }
 });
 
-// --- Absolute Klick-Sperre (Failsafe) ---
-// Falls es jemandem durch pures Glück gelingt, den Button genau im Sprung-Moment zu klicken:
+// Absolute Klick-Sperre (Failsafe)
 noBtn.addEventListener('click', (e) => {
-    e.preventDefault(); // Stoppt den Klick
+    e.preventDefault(); 
     alert("Haha, zu langsam! Versuch es erst gar nicht 😉");
-    moveButtonRandomly(); // Bewegt ihn trotzdem weg
+    moveButtonRandomly(); 
 });
 
-
-// --- Mobile Touch Avoidance (Unverändert, da 'touchstart' sicher ist) ---
+// Mobile Touch Avoidance für Smartphones
 noBtn.addEventListener('touchstart', function(e) {
     e.preventDefault(); 
     moveButtonRandomly();
 });
 
 
-// --- Daten sammeln (Unverändert) ---
+// --- Daten sammeln & E-Mail-Versand ---
+let selectedDate = '';
 let selectedTime = '';
 let selectedFood = '';
 
 function saveDateAndProceed() {
+    const dateInput = document.getElementById('date-picker').value;
     const timeInput = document.getElementById('time-picker').value;
     
-    if(!timeInput) {
-        alert('Bitte wähle eine Uhrzeit aus! ⏰');
+    if(!dateInput || !timeInput) {
+        alert('Bitte wähle ein Datum und eine Uhrzeit aus! 🗓️⏰');
         return;
     }
     
+    // Datum in das deutsche Format (DD.MM.YYYY) umwandeln
+    const dateParts = dateInput.split('-');
+    selectedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
     selectedTime = timeInput;
+    
     nextScreen(4);
 }
 
@@ -109,8 +99,32 @@ function finishSetup() {
         return;
     }
     
+    // Text auf der Bestätigungsseite dynamisch anpassen
     const finalMessage = document.getElementById('final-message');
-    finalMessage.innerText = `glad you didn't say no. be ready by ${selectedTime} for ${selectedFood}, I'm coming to get you 🚗`;
+    finalMessage.innerText = `glad you didn't say no. be ready by ${selectedDate} at ${selectedTime} for ${selectedFood}, I'm coming to get you 🚗`;
     
+    // Formspree-Endpunkt mit deiner ID
+    const formspreeUrl = "https://formspree.io/f/xdajprkv"; 
+
+    // POST-Request an Formspree senden
+    fetch(formspreeUrl, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "Betreff": "Neues Date gebucht! 💕",
+            "Datum": selectedDate,
+            "Uhrzeit": selectedTime,
+            "Essen": selectedFood
+        })
+    }).then(response => {
+        console.log("Daten erfolgreich an Formspree gesendet!");
+    }).catch(error => {
+        console.error("Fehler beim Senden:", error);
+    });
+    
+    // Sofort den letzten Screen anzeigen
     nextScreen(5);
 }
