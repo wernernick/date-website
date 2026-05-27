@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Date?</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="screen-1" class="screen active">
+        <img src="cat.gif" alt="Cute Cat" class="media">
+        <h1>Will you go on a date with me? 🌸</h1>
+        <div class="button-container">
+            <button id="yes-btn" onclick="nextScreen(2)">YES 💕</button>
+            <button id="no-btn">no... 😭</button>
+        </div>
+    </div>
+
+    <div id="screen-2" class="screen hidden">
+        <img src="spongebob.gif" alt="Spongebob" class="media">
+        <h1>WAIT YOU ACTUALLY SAID YES?? 😭</h1>
+        <p>I was so ready for you to say no 😅</p>
+        <button class="action-btn" onclick="nextScreen(3)">okay okay ➔</button>
+    </div>
+
+    <div id="screen-3" class="screen hidden">
+        <h1 class="date-title">So... when are you free? 🗓️</h1>
+        <div class="form-group">
+            <label>Pick a Day 💕</label>
+            <input type="date" id="date-picker">
+        </div>
+        <div class="form-group">
+            <label>What Time? ⏰</label>
+            <input type="time" id="time-picker">
+        </div>
+        <button class="action-btn" onclick="saveDateAndProceed()">set the date! ✨</button>
+    </div>
+
+    <div id="screen-4" class="screen hidden">
+        <h1>What are we feeling? ✨</h1>
+        <div class="food-grid">
+            <div class="food-item" onclick="selectFood(this, 'Pizza')">🍕 Pizza</div>
+            <div class="food-item" onclick="selectFood(this, 'Sushi')">🍣 Sushi</div>
+            <div class="food-item" onclick="selectFood(this, 'Burgers')">🍔 Burgers</div>
+            <div class="food-item" onclick="selectFood(this, 'Pasta')">🍝 Pasta</div>
+            <div class="food-item" onclick="selectFood(this, 'Tacos')">🌮 Tacos</div>
+            <div class="food-item" onclick="selectFood(this, 'Ramen')">🍜 Ramen</div>
+        </div>
+        <button class="action-btn" onclick="finishSetup()">this one! ➔</button>
+    </div>
+
+    <div id="screen-5" class="screen hidden">
+        <img src="shrek.gif" alt="Shrek" class="media">
+        <h1 id="final-message">glad you didn't say no. be ready by X, I'm coming to get you 🚗</h1>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
