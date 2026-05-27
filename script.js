@@ -3,7 +3,7 @@ function nextScreen(screenNumber) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
         screen.classList.add('hidden');
-    });
+    }); 
     
     const next = document.getElementById(`screen-${screenNumber}`);
     next.classList.remove('hidden');
